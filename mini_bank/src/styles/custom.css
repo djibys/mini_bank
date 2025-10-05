@@ -1,0 +1,501 @@
+:root {
+  --primary-color: #0d6efd;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #0dcaf0;
+  --sidebar-width: 280px;
+}
+
+/* ============================================
+   CIRCULAR STAT CARDS
+   ============================================ */
+.circular-stat-card {
+  padding: 1rem;
+}
+
+.circular-stat-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 250px;
+}
+
+.circular-border {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.circular-border:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.circular-inner {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
+
+.stat-content {
+  width: 100%;
+}
+
+.stat-icon-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.stat-title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   SIDEBAR - FULLSCREEN MODE
+   ============================================ */
+
+/* Layout principal */
+.app-container {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
+  padding: 2rem 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1050;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  overflow-y: auto;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Sidebar cachée (fullscreen) */
+.sidebar.sidebar-hidden {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============================================
+   BOUTON TOGGLE DANS LE SIDEBAR
+   ============================================ */
+
+.btn-toggle-sidebar-inside {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.btn-toggle-sidebar-inside:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+.btn-toggle-sidebar-inside:active {
+  transform: scale(0.9);
+}
+
+/* ============================================
+   SIDEBAR HEADER & LOGO
+   ============================================ */
+
+.sidebar-header {
+  margin-bottom: 2rem;
+}
+
+.sidebar-logo {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.sidebar-title {
+  margin: 0;
+  font-size: 1.25rem;
+  color: white;
+  font-weight: 600;
+}
+
+.sidebar-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  text-align: left;
+  transition: all 0.3s;
+  cursor: pointer;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.sidebar-nav-item i {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.sidebar-nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(5px);
+}
+
+.sidebar-nav-item.active {
+  background: #0d6efd;
+  color: white;
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+}
+
+/* ============================================
+   MAIN CONTENT & WRAPPER
+   ============================================ */
+
+.main-wrapper {
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease;
+  width: calc(100% - var(--sidebar-width));
+  min-height: 100vh;
+}
+
+/* Fullscreen quand sidebar fermée */
+.sidebar.sidebar-hidden ~ .main-wrapper {
+  margin-left: 0;
+  width: 100%;
+}
+
+.main-content {
+  background: #f8f9fa;
+  min-height: calc(100vh - 80px);
+  padding: 1.5rem;
+}
+
+/* ============================================
+   HEADER
+   ============================================ */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  background: white !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Bouton hamburger pour ouvrir le sidebar */
+.btn-hamburger {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border: none;
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
+}
+
+.btn-hamburger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.5);
+}
+
+.btn-hamburger:active {
+  transform: translateY(0);
+}
+
+/* ============================================
+   CARDS & STATS
+   ============================================ */
+
+.custom-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.custom-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card {
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+/* ============================================
+   TRANSACTIONS
+   ============================================ */
+
+.transaction-item {
+  border-bottom: 1px solid #e9ecef;
+  transition: background 0.2s;
+  padding: 1rem;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-item:hover {
+  background: #f8f9fa;
+}
+
+.transaction-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+.custom-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.custom-table thead {
+  background: #f8f9fa;
+}
+
+.custom-table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: #6c757d;
+  border-bottom: 2px solid #dee2e6;
+  padding: 1rem;
+}
+
+.custom-table td {
+  vertical-align: middle;
+  padding: 1rem;
+}
+
+.custom-table tbody tr {
+  transition: background 0.2s;
+}
+
+.custom-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+
+.custom-pagination .page-link {
+  border-radius: 8px;
+  margin: 0 3px;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  transition: all 0.2s;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.custom-pagination .page-link:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   BADGES & BUTTONS
+   ============================================ */
+
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border-radius: 6px;
+}
+
+.btn {
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.5rem;
+}
+
+/* ============================================
+   SCROLLBAR PERSONNALISÉE
+   ============================================ */
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 991.98px) {
+  .main-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .btn-toggle-sidebar-float:not(.collapsed) {
+    left: calc(var(--sidebar-width) + 20px);
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    width: 280px;
+  }
+  
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+}
