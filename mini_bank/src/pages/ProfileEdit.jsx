@@ -31,12 +31,20 @@ const ProfileEdit = ({ onProfileUpdate }) => {
         tel: user.tel || '',
         adresse: user.adresse || ''
       });
-      // Préférer l'URL absolue si disponible, sinon construire depuis photo
-      const photoUrl = user.photoUrl || (user.photo ? `http://localhost:3000/${user.photo.replace(/\\/g, '/')}` : null);
+      // Utiliser directement photoUrl du backend ou construire l'URL correctement
+      let photoUrl = null;
+      if (user.photoUrl) {
+        photoUrl = user.photoUrl;
+      } else if (user.photo) {
+        // Construire l'URL en s'assurant que le chemin est correct
+        const cleanPath = user.photo.replace(/\\/g, '/');
+        photoUrl = cleanPath.startsWith('http') ? cleanPath : `http://localhost:3000/${cleanPath}`;
+      }
       console.log('Photo chargée:', { photoUrl, userPhoto: user.photo, userPhotoUrl: user.photoUrl });
       setCurrentPhoto(photoUrl);
     }
   };
+  
   const getInitials = () => {
     const first = formData.prenom?.charAt(0) || '';
     const last = formData.nom?.charAt(0) || '';
