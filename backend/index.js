@@ -14,29 +14,14 @@ const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
-// Middleware pour parser le JSON
-app.use(express.json());
-
-// CORS - Configuration corrigée (DOIT être avant helmet et rate limiter)
-const allowedOrigins = [
-  '*'
-];
-
+// CORS - Configuration pour Vercel et Render (DOIT être avant tout)
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Autoriser les requêtes sans origin (comme Postman)
-      if (!origin) return callback(null, true);
-      
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: true, // Autorise tous les origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    exposedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
     optionsSuccessStatus: 204
   })
@@ -45,6 +30,8 @@ app.use(
 // Middleware de sécurité - Configuration adaptée pour permettre le chargement des images
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginEmbedderPolicy: false,
   contentSecurityPolicy: false
 }));
 
@@ -62,9 +49,9 @@ app.use(limiter);
 // Logging
 app.use(morgan("combined"));
 
-// Parsers
+// Parsers (avec gestion d'erreur pour body trop large)
 app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Routes
 app.get("/api/health", (req, res) => {
@@ -76,7 +63,6 @@ app.get("/api/health", (req, res) => {
 });
 app.use('/api/comptes', compteRoutes);
 app.use('/api/transactions', transactionRoutes);
-
 app.use("/api/users", userRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -91,10 +77,19 @@ app.use((req, res) => {
 // Error Handler
 app.use((error, req, res, next) => {
   console.error("Erreur:", error);
-  res.status(500).json({
+  
+  // Gestion spécifique des erreurs de parsing JSON
+  if (error instanceof SyntaxError && error.status === 400 && 'body' in error) {
+    return res.status(400).json({
+      success: false,
+      message: "Corps de requête JSON invalide",
+    });
+  }
+  
+  res.status(error.status || 500).json({
     success: false,
-    message: "Erreur serveur",
-    ...(process.env.NODE_ENV === "development" && { error: error.message }),
+    message: error.message || "Erreur serveur",
+    ...(process.env.NODE_ENV === "development" && { error: error.message, stack: error.stack }),
   });
 });
 
@@ -110,24 +105,32 @@ if (!process.env.JWT_SECRET) {
 const connectDB = async () => {
   try {
     const options = {
-      serverSelectionTimeoutMS: 30000, //Augmente le timeout à 30 secondes
+      serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
-      family: 4 // Force IPv4
+      family: 4, // Force IPv4
+      retryWrites: true,
+      w: 'majority'
     };
     
-    await mongoose.connect(
-      process.env.MONGODB_URI || "mongodb://localhost:27017/minibank",
-      options
-    );
-    console.log("✅ MongoDB connecté");
+    const mongoUri = process.env.MONGODB_URI || "mongodb://localhost:27017/minibank";
+    console.log("🔄 Connexion à MongoDB Atlas...");
+    
+    await mongoose.connect(mongoUri, options);
+    console.log("✅ MongoDB connecté avec succès");
   } catch (error) {
-    console.error("❌ Erreur MongoDB:", error);
+    console.error("❌ Erreur MongoDB:", error.message);
     console.error("\n⚠️  Solutions possibles:");
-    console.error("1. Vérifiez que votre IP est bien ajoutée dans MongoDB Atlas (Network Access)");
+    console.error("1. Sur MongoDB Atlas > Network Access > Add IP Address > Allow Access from Anywhere (0.0.0.0/0)");
     console.error("2. Attendez 2-3 minutes que l'IP soit active sur Atlas");
-    console.error("3. Vérifiez votre connexion Internet et firewall");
-    console.error("4. Vérifiez que MONGODB_URI est correct dans votre fichier .env\n");
-    process.exit(1);
+    console.error("3. Vérifiez que MONGODB_URI dans .env commence par 'mongodb+srv://'");
+    console.error("4. Vérifiez votre connexion Internet\n");
+    
+    // En production (Render), on peut vouloir continuer sans crash
+    if (process.env.NODE_ENV === 'production') {
+      console.error("⚠️  Mode production: Le serveur continue sans MongoDB");
+    } else {
+      process.exit(1);
+    }
   }
 };
 
