@@ -16,7 +16,7 @@ const app = express();
 
 // CORS - Configuration corrigée (DOIT être avant helmet et rate limiter)
 const allowedOrigins = [
-  'http://localhost:3001'
+  '*'
 ];
 
 app.use(
