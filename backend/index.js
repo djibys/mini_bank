@@ -14,6 +14,9 @@ const transactionRoutes = require('./routes/transactionRoutes');
 
 const app = express();
 
+// Middleware pour parser le JSON
+app.use(express.json());
+
 // CORS - Configuration corrigée (DOIT être avant helmet et rate limiter)
 const allowedOrigins = [
   '*'
