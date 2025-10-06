@@ -106,12 +106,24 @@ if (!process.env.JWT_SECRET) {
 // Connexion MongoDB
 const connectDB = async () => {
   try {
+    const options = {
+      serverSelectionTimeoutMS: 30000, //Augmente le timeout à 30 secondes
+      socketTimeoutMS: 45000,
+      family: 4 // Force IPv4
+    };
+    
     await mongoose.connect(
-      process.env.MONGODB_URI || "mongodb://localhost:27017/minibank"
+      process.env.MONGODB_URI || "mongodb://localhost:27017/minibank",
+      options
     );
     console.log("✅ MongoDB connecté");
   } catch (error) {
     console.error("❌ Erreur MongoDB:", error);
+    console.error("\n⚠️  Solutions possibles:");
+    console.error("1. Vérifiez que votre IP est bien ajoutée dans MongoDB Atlas (Network Access)");
+    console.error("2. Attendez 2-3 minutes que l'IP soit active sur Atlas");
+    console.error("3. Vérifiez votre connexion Internet et firewall");
+    console.error("4. Vérifiez que MONGODB_URI est correct dans votre fichier .env\n");
     process.exit(1);
   }
 };
